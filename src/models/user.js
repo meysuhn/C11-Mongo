@@ -1,0 +1,86 @@
+
+
+const mongoose = require('mongoose');
+const validator = require('validator');
+const bcrypt = require('bcryptjs'); // https://stackoverflow.com/questions/29320201/error-installing-bcrypt-with-npm
+
+// _id (ObjectId) is auto-generated and so doesn't need to be declared in the model schema.
+
+const UserSchema = new mongoose.Schema({
+  fullName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  emailAddress: {
+    type: String,
+    required: true, // enforces response to this field
+    trim: true, // removes any whitespace from beginning and end of text input
+    validate: { validator: validator.isEmail, message: 'Invalid Email Address' },
+    unique: true, // ensures email address does not already appear in the database.
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+});
+
+
+// Method to Authenticate User
+// See https://teamtreehouse.com/library/authenticating-the-username-and-password
+
+UserSchema.statics.authenticate = (email, password, callback) => {
+    User.findOne({ emailAddress: email })
+        .exec((err, user) => { // .exec executes the search and have a callback to process the results
+          console.log('Hello1');
+          console.log(user); // It's getting as far as here.
+            if (err) {
+              console.log('Err 1');
+                return callback(err);
+            } else if (!user) { // if email address don't exist then error
+              console.log('Err 2');
+                err = new Error();
+                err.message = 'User not found (no account matches that email address)';
+                err.status = 401;
+                return callback(err);
+            }
+            bcrypt.compare(password, user.password, (err, result) => { // compare supplied password with hashed version
+              console.log(password);
+              console.log(user.password);
+              console.log('Hi from Bcrypt');
+                if (result === true) { // compare method simply returns true if there's a match, and false if not.
+                  console.log('Hello2');
+                    console.log(user);
+                    return callback(null, user); // return the authorised user back to middlware
+                      // null represents an error value. Node's standard pattern for callbackas is (error, argument1, argument 2 etc)
+                      // As there's no error in this case we pass null to that parameter.
+                }
+                  console.log('This error is firing');
+                    return callback();
+            });
+        });
+};
+
+// For hashing password just before storing new user record in the db
+UserSchema.pre('save', (next) => {
+  const user = this; // Mongoose assigns object it is about to insert in the db to the JS keyword 'this'
+    // here 'this' holds the user object and its data.
+    bcrypt.hash(user.password, 10, (err, hash) => {
+      // user contains document that Mongoose will insert into Mongo
+        // .password property holds the plain text password provided by the user
+      // 10 tells bcrypt to apply encryption algo 10 times.
+      // The callback. Bcrypt will run the callback after the password is hashed.
+      if (err) {
+        return next(err); // pass error to our global error handler.
+      }
+      user.password = hash; // if no error then assign hashed value to password property of the user object
+        // i.e. overwrite the plain text password with the new secure hash.
+      next(); // Call 'next' to call the next function in the middleware stack.
+    });
+});
+
+// 'const User' holds the model defined above.
+// ('name of the model', the schema that defines it (i.e. the UserSchema declared in the above constructor))
+// Mongoose will pluralise the name 'User' to 'Users', which will map to a 'Users' collection in the mongodb database.
+const User = mongoose.model('User', UserSchema);
+module.exports = User;
