@@ -1,4 +1,4 @@
-# Single Page App in AngularJS
+# Build a Course Rating API With Express
 ## FullStack Tech Degree Project 11
 
 ### Mongodb, Node, Express, Mongoose
