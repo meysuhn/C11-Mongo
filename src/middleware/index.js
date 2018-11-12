@@ -3,8 +3,8 @@ const auth = require('basic-auth');
 const User = require('../models/user');
 
 function requiresLogin(req, res, next) {
-  const credentials = auth(req); // This is Debs! auth is just passed the req object directly.
-  if (credentials) { // This is Debs! if these are present then user is logged in
+  const credentials = auth(req); // auth is just passed the req object directly.
+  if (credentials) { //  if these are present then user is logged in
     User.authenticate(credentials.name, credentials.pass, (err, user) => {
           if (err || !user) {
               err = new Error();
