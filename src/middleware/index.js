@@ -1,11 +1,17 @@
 
+
 const auth = require('basic-auth');
 const User = require('../models/user');
 
 function requiresLogin(req, res, next) {
   const credentials = auth(req); // auth is just passed the req object directly.
+  console.log('Credentials');
+  console.log(credentials);
   if (credentials) { //  if these are present then user is logged in
     User.authenticate(credentials.name, credentials.pass, (err, user) => {
+      // Before the below runs the authenticate method in user schema will run.
+      console.log('Here');
+      console.log(user);
           if (err || !user) {
               err = new Error();
               err.message = 'Wrong email or password.';
