@@ -66,6 +66,7 @@ UserSchema.statics.authenticate = (email, password, callback) => {
         });
 };
 
+// USE ES6 BUT THEN USE A COMPILER LIKE WEBPACK OR BABEL. GOOD PRACTICE.
 
 // Below not written with arrow functions as they mess with 'this' context:
   // https://stackoverflow.com/questions/33774472/mongoose-pre-save-is-using-incorrect-this-context

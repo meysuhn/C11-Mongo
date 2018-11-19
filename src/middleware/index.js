@@ -4,11 +4,11 @@ const auth = require('basic-auth');
 const User = require('../models/user');
 
 function requiresLogin(req, res, next) {
-  const credentials = auth(req); // auth is just passed the req object directly.
+  const authCredentials = auth(req); // auth is just passed the req object directly.
   console.log('Credentials');
-  console.log(credentials);
-  if (credentials) { //  if these are present then user is logged in
-    User.authenticate(credentials.name, credentials.pass, (err, user) => {
+  console.log(authCredentials);
+  if (authCredentials) { //  if these are present then user is logged in
+    User.authenticate(authCredentials.name, authCredentials.pass, (err, user) => {
       // Before the below runs the authenticate method in user schema will run.
       console.log('Here');
       console.log(user);
@@ -19,6 +19,7 @@ function requiresLogin(req, res, next) {
               return next(err);
           } // ES5 would have an 'else' here, but you've ESLINT set to 'no-else'
               req.AuthorisedUser = user; // SUCCESS
+              console.log(req.AuthorisedUser);
               return next();
       });
   } else { // if not logged in then display error to the user.
