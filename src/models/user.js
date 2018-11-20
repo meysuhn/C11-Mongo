@@ -9,19 +9,19 @@ const bcrypt = require('bcryptjs'); // https://stackoverflow.com/questions/29320
 const UserSchema = new mongoose.Schema({
   fullName: {
     type: String,
-    required: true,
+    required: 'Please enter your name',
     trim: true,
   },
   emailAddress: {
     type: String,
-    required: true, // enforces response to this field
+    required: 'Please provide your email address', // enforces response to this field
     trim: true, // removes any whitespace from beginning and end of text input
-    validate: { validator: validator.isEmail, message: 'Invalid Email Address' },
+    validate: { validator: validator.isEmail, message: 'You must enter a valid email address' },
     unique: true, // ensures email address does not already appear in the database.
   },
   password: {
     type: String,
-    required: true,
+    required: 'A password is required',
   },
 });
 

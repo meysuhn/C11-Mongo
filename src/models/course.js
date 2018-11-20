@@ -9,12 +9,12 @@ const CourseSchema = new mongoose.Schema({
   },
   title: {
     type: String,
-    required: true,
+    required: 'A course title must be provided',
     trim: true,
   },
   description: {
     type: String,
-    required: true,
+    required: 'Please provide a course description',
     trim: true,
   },
   estimatedTime: {

@@ -18,11 +18,11 @@ router.get('/', mid.requiresLogin, (req, res) => { // Passes request to middlewa
 // // POST /api/users 201
 // // Creates a user, sets the Location header to "/", and returns no content
 router.post('/', (req, res, next) => {
-  console.log('Initial req.body');
-  console.log(req.body);
+  // console.log('Initial req.body');
+  // console.log(req.body);
     User.findOne({ emailAddress: req.body.emailAddress }).then((err, user) => {
-      console.log('.exec User');
-      console.log(user); // It's NULL here!
+      // console.log('.exec User');
+      // console.log(user); // It's NULL here!
         if (user) { // if there's an email match then error. No duplicates allowed.
             err = new Error();
             err.message = 'Email already exists in database';
@@ -32,8 +32,8 @@ router.post('/', (req, res, next) => {
             User.create(req.body, (err, user) => {
                 if (!user.emailAddress || !user.fullName || !user.password) { // if any fields missing then reject.
                   // DEBS. Did the above line come form DM or not?
-                  console.log('Chris Successfully Created');
-                  console.log(user);
+                  // console.log('Chris Successfully Created');
+                  // console.log(user);
                     err.status = 400;
                     return next(err);
                 }

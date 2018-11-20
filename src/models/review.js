@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 
 
 const ReviewSchema = new mongoose.Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    auto: true,
+  },
   user: { // _id from the users collection
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -14,7 +18,7 @@ const ReviewSchema = new mongoose.Schema({
   },
   rating: { //  must fall between “1” and “5”
     type: Number,
-    required: true,
+    required: 'Please provide a rating between 1 to 5',
     min: 1,
     max: 5,
   },

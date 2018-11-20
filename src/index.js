@@ -4,6 +4,7 @@ const jsonParser = require('body-parser').json; // a function that will return m
 const mongoose = require('mongoose');
 const courses = require('./routes/courses');
 const users = require('./routes/users');
+const reviews = require('./routes/reviews');
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use(jsonParser());
 // i.e. here I'm saying to access any route in the routes module each URL needs to be prefaced with 'api'
 app.use('/api/users', users);
 app.use('/api/courses', courses);
+app.use('/api/reviews', reviews);
 // NOTE later try removing 'users' and 'courses' here and adding them instead directly onto the route declarations
 
 /*---------------------------------------------------------------------
@@ -57,11 +59,13 @@ app.use((req, res) => {
 });
 
 // global error handler
-app.use((err, req, res) => { // 1st param is an error object.
-  console.error(err.stack);
-  res.status(err.status || 500).json({ // if err object has status propery then use that, if not then set 500.
+app.use((err, req, res, next) => { // 1st param is an error object.
+  console.error('Express Global Error Handler Fired');
+  // console.error(err.stack);
+  return res.status(err.status || 500).json({ // if err object has status propery then use that, if not then set 500.
     message: err.message,
     error: {},
+    status: err.status,
   }); // error is sent to the client as json.
 });
 
