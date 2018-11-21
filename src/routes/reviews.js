@@ -18,4 +18,18 @@ router.get('/', (req, res, next) => {
   });
 });
 
+// DELETE Reviews
+// Delete User
+router.delete('/:reviewId', (req, res, next) => {
+  Review.findByIdAndRemove(req.params.reviewId, (err) => {
+    console.log(req.params);
+    if (err) {
+      err.status = 400;
+      return next(err);
+    }
+  return res.status(202).json();
+  });
+});
+
+
 module.exports = router;

@@ -30,17 +30,17 @@ const UserSchema = new mongoose.Schema({
 // See https://teamtreehouse.com/library/authenticating-the-username-and-password
 
 UserSchema.statics.authenticate = (email, password, callback) => {
-  console.log('THIS object line 33');
-  console.log(this);
+  // console.log('THIS object line 33');
+  // console.log(this);
     User.findOne({ emailAddress: email })
         .exec((err, user) => { // .exec executes the search and have a callback to process the results
-          console.log('Chris .exec');
-          console.log(user); // It's getting as far as here.
+          // console.log('Chris .exec');
+          // console.log(user); // It's getting as far as here.
             if (err) {
-              console.log('Err 1');
+              // console.log('Err 1');
                 return callback(err);
             } else if (!user) { // if email address don't exist then error
-              console.log('Err 2');
+              // console.log('Err 2');
                 err = new Error();
                 err.message = 'User not found (no account matches that email address)';
                 err.status = 401;
@@ -48,19 +48,19 @@ UserSchema.statics.authenticate = (email, password, callback) => {
             }
             bcrypt.compare(password, user.password, (err, result) => { // compare supplied password with hashed version
               // 1st argument is user supplied password. 2nd argument is password stored in db.
-              console.log('User supplied password:');
-              console.log(password);
-              console.log('Database password:');
-              console.log(user.password);
-              console.log('Hi from Bcrypt');
+              // console.log('User supplied password:');
+              // console.log(password);
+              // console.log('Database password:');
+              // console.log(user.password);
+              // console.log('Hi from Bcrypt');
                 if (result === true) { // compare method simply returns true if there's a match, and false if not.
-                  console.log('Hello2');
-                    console.log(user);
+                  // console.log('Hello2');
+                    // console.log(user);
                     return callback(null, user); // return the authorised user back to middlware
                       // null represents an error value. Node's standard pattern for callbackas is (error, argument1, argument 2 etc)
                       // As there's no error in this case we pass null to that parameter.
                 }
-                  console.log('This error is firing');
+                  // console.log('This error is firing');
                     return callback();
             });
         });
