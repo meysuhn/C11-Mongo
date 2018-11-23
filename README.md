@@ -13,7 +13,7 @@
 In the command line navigate to `/seed-data` and run the following two commands, which will seed the Courses and Reviews collections to the project's course_rating_api db:
 
 `mongoimport --db course_rating_api --collection courses --type=json --jsonArray --file courses.json`<br/>
-`mongoimport --db course_rating_api --collection courses --file courses.json --jsonArray`
+`mongoimport --db course_rating_api --collection reviews --type=json --jsonArray --file reviews.json`
 
 ##### (3) Run the application
 `npm start` or `nodemon`
