@@ -25,7 +25,8 @@ Complete the json fields below and POST in the body Postman field to: `http://lo
     "fullName": "",
     "emailAddress": "",
     "password": ""
-}```
+}
+```
 
 ### Running the tests
 (1) Get your newly created user's id from the `http://localhost:5000/api/users/` route<br/>
