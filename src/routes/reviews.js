@@ -6,7 +6,7 @@ const mid = require('../middleware');
 
 const router = express.Router();
 
-// GET Reviews 2
+// GET Reviews
   // Returns the Course "_id" and "title" properties
 router.get('/', (req, res, next) => {
   Review.find({}, 'review user', (err, reviews) => {
@@ -18,11 +18,10 @@ router.get('/', (req, res, next) => {
   });
 });
 
-// DELETE Reviews
-// Delete User
+// DELETE Review
+  // This doesn't remove the _id from the course array, come back to that later.
 router.delete('/:reviewId', (req, res, next) => {
   Review.findByIdAndRemove(req.params.reviewId, (err) => {
-    console.log(req.params);
     if (err) {
       err.status = 400;
       return next(err);

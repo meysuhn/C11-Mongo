@@ -37,18 +37,10 @@ app.use('/api/courses', courses);
 app.use('/api/reviews', reviews);
 // NOTE later try removing 'users' and 'courses' here and adding them instead directly onto the route declarations
 
-/*---------------------------------------------------------------------
-END OF MIDDLEWARE
-----------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------
-Error Handling
+ERROR HANDLING
 ----------------------------------------------------------------------*/
-
-// uncomment this route in order to test the global error handler
-// app.get('/error', function (req, res) {
-//   throw new Error('Test error');
-// });
 
 // send 404 if no other route matched
 // NOTE // this is slightly different to how AC sets his up. Why?
@@ -69,13 +61,9 @@ app.use((err, req, res, next) => { // 1st param is an error object.
   }); // error is sent to the client as json.
 });
 
-/*---------------------------------------------------------------------
-End of Error Handling
-----------------------------------------------------------------------*/
-
 
 /*---------------------------------------------------------------------
-DATABASE STUFF
+DATABASE CONNECTION
 ----------------------------------------------------------------------*/
 
 // Connect to Mongo db with Mongoose
@@ -101,10 +89,6 @@ db.once('open', () => {
   // db.close(() => { console.log('DB Closed'); }); // close connection when communication finished.
 });
 
-/*---------------------------------------------------------------------
- END OF DATABASE STUFF
-----------------------------------------------------------------------*/
-
 
 /*---------------------------------------------------------------------
  SERVER PORT
@@ -118,6 +102,4 @@ const server = app.listen(app.get('port'), () => {
   console.log(`Express server is listening on port ${server.address().port}`);
 });
 
-/*---------------------------------------------------------------------
- END OF SERVER PORT
-----------------------------------------------------------------------*/
+// module.exports = server;

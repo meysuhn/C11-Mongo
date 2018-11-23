@@ -11,7 +11,7 @@ const router = express.Router();
 // GET /api/courses 200
   // Returns the Course "_id" and "title" properties
 router.get('/', (req, res, next) => {
-  Course.find({}, 'course_id title user', (err, courses) => {
+  Course.find({}, 'course_id title', (err, courses) => {
     if (err) {
       err.status = 400; // 400 Bad Request response status code indicates that the server could not understand the request due to invalid syntax.
       return next(err);
@@ -21,10 +21,9 @@ router.get('/', (req, res, next) => {
 });
 
 
-// //////////////////////////////////////////////////////////////////////////////
-// These identical two GET routes just have one difference, first will return also the related user and reviews documents.
 // GET /api/course/:courseId 200
   // Returns all Course properties and related documents for the provided course ID
+  // populate returns related documents, not only the ids.
 router.get('/:courseId', (req, res, next) => {
   Course.findById(req.params.courseId)
     .populate('user', 'fullName') // 2nd param means only the fullName on the user document will be returned.
@@ -39,27 +38,10 @@ router.get('/:courseId', (req, res, next) => {
 });
 
 
-// // GET /api/course/:courseId 200
-//   // Returns all Course properties and related documents for the provided course ID
-// router.get('/:courseId', (req, res, next) => {
-//   Course.findById(req.params.courseId, (err, course) => { // find course by id (using Express's params)
-//     if (err) {
-//       err.status = 400;
-//       return next(err);
-//     }
-//   return res.status(200).json(course);
-//   });
-// });
-
-// //////////////////////////////////////////////////////////////////////////////
-
-
 // POST /api/courses 201
   // Creates a course, sets the Location header, and returns no content
 router.post('/', mid.requiresLogin, (req, res, next) => {
-  console.log(req.body);
   req.body.user = res.locals.user._id; // add authorised user id to new course body
-  console.log(req.body);
   Course.create(req.body, (err) => {
     if (err) {
       err.status = 400; // will fire if Mongoose validation fails, passing to Express Global Error Handler
@@ -81,17 +63,6 @@ router.put('/:courseId', mid.requiresLogin, (req, res, next) => {
     return res.status(204).json();
   });
 });
-
-
-// This by itself does post a review to the reviews model.
-
-// You need to do the findoneandupdate before the return.
-// I think this is close...
-
-// Christ, it's working! Just need to add the user now.
-
-// You want to attach the user id of the currently logged in user.
-  // res.locals?
 
 
 // POST /api/courses/:courseId/reviews 201
@@ -125,41 +96,14 @@ router.post('/:courseId/reviews', mid.requiresLogin, (req, res, next) => {
                   err.status = 400;
                   return next(err);
                 }
-              }, // this has to be here for it work. Not sure why.
-            ); // end of findOneAndUpdate
+              },
+            ); // end of updateOne
            return res.location('/:courseId').status(201).json({
              review, // shorthand
-             // courseID: req.params.courseId, // This may not be required.
            });
         }); // end of Review.Create
     }); // end of .exec
 });
-
-
-// // POST /api/courses/:courseId/reviews 201
-//   // Creates a review for the specified course ID, sets the Location header to the related course, and returns no content
-// router.post('/:courseId/reviews', mid.requiresLogin, (req, res, next) => {
-//   req.body.user = res.locals.user._id; // add authorised user id to new review body
-//   Review.create(req.body, (err, review) => {
-//      if (err) {
-//        err.status = 400;
-//        return next(err);
-//      } // else
-//      Course.findOneAndUpdate(
-//        { _id: req.params.courseId }, // the associated couse id, taken from the url
-//        { $push: { reviews: review._id } }, // the new review's id
-//        (err, wtf) => {
-//          console.log('wtf'); // this is the returned updated course
-//          console.log(wtf);
-//          // Can you put the if in here??
-//        }, // this has to be here for it work. Not sure why.
-//      ); // end of findOneAndUpdate
-//      return res.location('/:courseId').status(201).json({
-//        review, // shorthand
-//        // courseID: req.params.courseId, // This may not be required.
-//      });
-//   }); // end of Review.Create
-// });
 
 
 // ///////////////////////////////
@@ -169,7 +113,7 @@ router.post('/:courseId/reviews', mid.requiresLogin, (req, res, next) => {
 
 // GET Reviews
 // The reviews exist in the Reviews Collection. Only the review IDs exist in the course collection
- // Only the review IDs are returned.
+ // Only the review IDs are returned (as 'populate' hasn't been used)
 router.get('/:courseId/reviews', (req, res, next) => {
   Course.findById(req.params.courseId, (err, course) => { // find reviews by id (using Express's params)
     if (err) {
@@ -182,7 +126,7 @@ router.get('/:courseId/reviews', (req, res, next) => {
 
 
 // GET Steps
-// The steps exist in the Course Collection
+  // Steps exist in the documents of each course and don't have their own model.
 router.get('/:courseId/steps', (req, res, next) => {
   Course.findById(req.params.courseId, (err, course) => {
     if (err) {

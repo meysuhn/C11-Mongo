@@ -7,37 +7,35 @@ const mid = require('../middleware');
 
 const router = express.Router();
 
-
 // GET /api/users 200
-// Returns the currently authenticated user
+  // Returns the currently authenticated user
 router.get('/', mid.requiresLogin, (req, res) => { // Passes request to middleware's requiresLogin function
-  res.status(200).json(req.AuthorisedUser); // return the authorised user as json to the client
+  res.status(200).json(res.req.AuthorisedUser); // return the authorised user as json to the client
 });
 
 
-// // POST /api/users 201
-// // Creates a user, sets the Location header to "/", and returns no content
+// POST /api/users 201
+  // Creates a user, sets the Location header to "/", and returns no content
 router.post('/', (req, res, next) => {
-    User.findOne({ emailAddress: req.body.emailAddress }).then((err, user) => {
-        if (user) { // if there's an email match then error. No duplicates allowed.
-            err = new Error();
-            err.message = 'Email already exists in database';
-            err.status = 400;
-            return next(err);
-        } // else
-            User.create(req.body, (err, user) => {
-                if (!user.emailAddress || !user.fullName || !user.password) { // if any fields missing then reject.
-                  // DEBS. Did the above line come form DM or not?
-                    err.status = 400;
-                    return next(err);
-                }
-                if (err) { // Any others errors pathway
-                    return next(err);
-                }
-                    return res.status(201).location('/').json(user); // Remove(user) before submission
-            });
-          // Don't put return next() to satisfy 'consistent-return' rule. It will break route.
+  User.findOne({ emailAddress: req.body.emailAddress }).exec((err, user) => {
+    if (user) { // if there's an email match then error. No duplicates allowed.
+      err = new Error();
+      err.message = 'Email already exists in database';
+      err.status = 400;
+      next(err);
+    } else {
+    User.create(req.body, (err, user) => {
+      if (!user.emailAddress || !user.fullName || !user.password) { // if any fields missing then reject.
+        err.status = 400;
+        return next(err);
+      }
+      if (err) { // Any others errors pathway
+        return next(err);
+      }
+      return res.status(201).location('/').json();
     });
+  }
+  }); // Don't put return next() to satisfy 'consistent-return' rule. It will break route.
 });
 
 // ///////////////////////////////

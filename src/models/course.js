@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const CourseSchema = new mongoose.Schema({
   user: { // _id from the users collection
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // I don't really get then what purpose this serves?
+    ref: 'User',
   },
   title: {
     type: String,
