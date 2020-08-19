@@ -20,7 +20,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
-    "mongoose": "^5.3.7",
+    "mongoose": "^5.7.5",
     "morgan": "^1.9.0",
     "validator": "^10.8.0"
   }
